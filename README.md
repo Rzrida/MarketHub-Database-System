@@ -255,14 +255,14 @@ Frontend technologies:
 
 # ER Diagram
 
-
-![Uploading Screenshot 2026-05-28 at 4.49.31 PM.png…]()
+<img width="972" height="530" alt="Screenshot 2026-05-28 at 4 53 01 PM" src="https://github.com/user-attachments/assets/f11a87dc-d558-438d-9fcb-4a3f42160998" />
 
 
 ---
 
 # Relational Schema
-![Uploading Screenshot 2026-05-28 at 4.49.56 PM.png…]()
+
+<img width="436" height="590" alt="Screenshot 2026-05-28 at 4 51 31 PM" src="https://github.com/user-attachments/assets/6249a37e-04ec-41c2-bde0-a7084d5f0c00" />
 
 ---
 
