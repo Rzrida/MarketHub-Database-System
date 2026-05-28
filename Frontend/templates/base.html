@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MarketHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:           #0b0f1a;
+            --bg-card:      #111827;
+            --bg-card-alt:  #151d2e;
+            --border:       rgba(255,255,255,0.12);
+            --accent:       #f43f5e;
+            --accent-glow:  rgba(244, 63, 94, 0.25);
+            --accent-dim:   #be1e3c;
+            --text:         #e2e8f0;
+            --text-muted:   #64748b;
+            --text-soft:    #94a3b8;
+            --success:      #22c55e;
+            --danger:       #ef4444;
+            --warning:      #f59e0b;
+            --info:         #38bdf8;
+            --radius:       14px;
+            --radius-sm:    8px;
+            --shadow:       0 4px 24px rgba(0,0,0,0.3);
+            --shadow-sm:    0 2px 12px rgba(0,0,0,0.2);
+            --font-head:    'Syne', sans-serif;
+            --font-body:    'DM Sans', sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            font-weight: 400;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Video Background ── */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        /* Dark overlay so text stays readable */
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 26, 0.5);
+            z-index: -1;
+        }
+
+        /* ── Navbar — fully transparent ── */
+        nav {
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        nav .logo {
+            font-family: var(--font-head);
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        nav .logo .accent { color: var(--accent); }
+        nav .logo .logo-icon {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+        nav .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-user-pill {
+            font-size: 12px;
+            color: var(--text-soft);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-right: 8px;
+        }
+        nav .nav-links a {
+            color: var(--text-soft);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        nav .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+        nav .nav-links .btn-nav {
+            background: var(--accent);
+            color: white;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 0 16px var(--accent-glow);
+            margin-left: 4px;
+        }
+        nav .nav-links .btn-nav:hover { background: var(--accent-dim); }
+
+        /* ── Flash Messages ── */
+        .flash-container { padding: 16px 36px 0; }
+        .alert {
+            padding: 13px 18px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+        .alert-success { background: rgba(34,197,94,0.1);  color: #86efac; border-color: rgba(34,197,94,0.2); }
+        .alert-danger  { background: rgba(239,68,68,0.1);  color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+        .alert-warning { background: rgba(245,158,11,0.1); color: #fcd34d; border-color: rgba(245,158,11,0.2); }
+        .alert-info    { background: rgba(56,189,248,0.1); color: #7dd3fc; border-color: rgba(56,189,248,0.2); }
+
+        /* ── Main Container ── */
+        .container {
+            max-width: 1140px;
+            margin: 36px auto;
+            padding: 0 24px;
+        }
+
+        /* ── Cards — fully transparent ── */
+        .card {
+            background: transparent;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: none;
+            padding: 28px;
+            margin-bottom: 22px;
+        }
+        .card h2 {
+            font-family: var(--font-head);
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(0); }
+        .btn-primary   { background: var(--accent); color: white; box-shadow: 0 0 16px var(--accent-glow); }
+        .btn-secondary { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.14); filter: none; }
+        .btn-success   { background: #16a34a; color: white; }
+        .btn-danger    { background: var(--danger); color: white; }
+        .btn-info      { background: #0284c7; color: white; }
+        .btn-sm        { padding: 5px 13px; font-size: 12.5px; border-radius: 6px; }
+
+        /* ── Forms ── */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font-body);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: var(--text-muted); }
+        .form-group select option { background: #1a2236; }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(244,63,94,0.05);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* ── Tables ── */
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        thead th {
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        tbody tr { transition: background 0.15s; }
+        tbody tr:hover { background: rgba(255,255,255,0.04); }
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-soft);
+        }
+        tbody td:first-child { color: var(--text); font-weight: 500; }
+
+        /* ── Product Grid ── */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: transparent;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: none;
+            overflow: hidden;
+            transition: all 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(244,63,94,0.35);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+        .product-card-header {
+            background: rgba(255,255,255,0.04);
+            height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .product-card-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(244,63,94,0.1) 0%, transparent 70%);
+        }
+        .product-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .product-card h3 {
+            font-family: var(--font-head);
+            font-size: 14.5px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+        .product-card .price {
+            color: var(--accent);
+            font-size: 20px;
+            font-weight: 800;
+            font-family: var(--font-head);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .product-card .meta { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.75; flex: 1; }
+        .product-card .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        /* ── Stats Row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: transparent;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .stat-card:hover { border-color: rgba(244,63,94,0.35); transform: translateY(-2px); }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        .stat-card .stat-value {
+            font-family: var(--font-head);
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: -1px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .stat-card .stat-label {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: capitalize;
+        }
+        .badge-success { background: rgba(34,197,94,0.15);  color: #86efac;  border: 1px solid rgba(34,197,94,0.2); }
+        .badge-warning { background: rgba(245,158,11,0.15); color: #fcd34d;  border: 1px solid rgba(245,158,11,0.2); }
+        .badge-danger  { background: rgba(239,68,68,0.15);  color: #fca5a5;  border: 1px solid rgba(239,68,68,0.2); }
+        .badge-info    { background: rgba(56,189,248,0.15); color: #7dd3fc;  border: 1px solid rgba(56,189,248,0.2); }
+
+        /* ── Page Title ── */
+        .page-title {
+            font-family: var(--font-head);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 26px;
+            letter-spacing: -0.8px;
+        }
+
+        /* ── Search Bar ── */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .search-bar input, .search-bar select {
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font-body);
+            color: var(--text);
+            flex: 1;
+            min-width: 160px;
+            transition: all 0.2s;
+        }
+        .search-bar input::placeholder { color: var(--text-muted); }
+        .search-bar select option { background: #1a2236; }
+        .search-bar input:focus, .search-bar select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 12.5px;
+            margin-top: 48px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            letter-spacing: 0.04em;
+        }
+        footer strong { color: var(--accent); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+        ::selection { background: var(--accent-glow); color: white; }
+    </style>
+</head>
+<body>
+
+<!-- Background Video -->
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='BGvideo.mp4') }}" type="video/mp4">
+</video>
+
+<!-- Dark overlay so content stays readable -->
+<div id="bg-overlay"></div>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="/" class="logo">
+        <div class="logo-icon">🛒</div>
+        Market<span class="accent">Hub</span>
+    </a>
+    <div class="nav-links">
+        {% if session.get('user_id') %}
+            <span class="nav-user-pill">{{ session['name'] }} · {{ session['role'] }}</span>
+            {% if session['role'] == 'buyer' %}
+                <a href="{{ url_for('buyer_home') }}">Browse</a>
+                <a href="{{ url_for('cart') }}">🛒 Cart</a>
+                <a href="{{ url_for('my_orders') }}">Orders</a>
+            {% elif session['role'] == 'seller' %}
+                <a href="{{ url_for('seller_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('add_product') }}">+ Add Product</a>
+            {% elif session['role'] == 'admin' %}
+                <a href="{{ url_for('admin_dashboard') }}">Reports</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="btn-nav">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-nav">Get Started</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- FLASH MESSAGES -->
+<div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>MarketHub &copy; 2025 &mdash; <strong>Database Project</strong></footer>
+
+</body>
+</html>

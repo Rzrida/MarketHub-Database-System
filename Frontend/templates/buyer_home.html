@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="background: transparent;
+            border-radius: 16px; padding: 36px 32px; margin-bottom: 28px;
+            border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;">
+    <h1 style="font-family: var(--font-head); font-size: 26px; font-weight: 800;
+               color: var(--text); letter-spacing: -0.6px; margin-bottom: 6px;">
+        Browse Products
+    </h1>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 22px;">
+        Discover thousands of products from top sellers
+    </p>
+    <form method="GET" action="{{ url_for('buyer_home') }}">
+        <div class="search-bar" style="margin-bottom: 0;">
+            <input type="text" name="search" placeholder="Search products..." value="{{ search }}" />
+            <select name="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat[0] }}" {% if selected_category == cat[0] %}selected{% endif %}>
+                        {{ cat[0] }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Search</button>
+            <a href="{{ url_for('buyer_home') }}" class="btn btn-secondary" style="white-space:nowrap;">Clear</a>
+        </div>
+    </form>
+</div>
+
+{% if products %}
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <p style="color: var(--text-muted); font-size: 13.5px;">
+            Showing <strong style="color:var(--text);">{{ products|length }}</strong> product(s)
+        </p>
+    </div>
+    <div class="product-grid">
+        {% for p in products %}
+        <div class="product-card">
+            <!-- Product Image -->
+            <div class="product-card-header" style="height:200px; background:#0d1321;">
+               {% if p[6] %}
+    <a href="{{ url_for('product_detail', product_id=p[0]) }}">
+        <img src="{{ url_for('static', filename='product_images/' + p[6]) }}"
+             alt="{{ p[1] }}"
+             style="width:100%; height:100%; object-fit:contain; display:block; background:#f8f8f8;" />
+    </a>
+                {% else %}
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.3;">
+                        <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span style="font-size:11px; color:var(--text-muted);">No image</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="product-card-body">
+                <h3>
+    <a href="{{ url_for('product_detail', product_id=p[0]) }}"
+       style="text-decoration:none; color:#1a1a2e;">
+        {{ p[1] }}
+    </a>
+</h3>
+                <div class="price">Rs {{ "%.2f"|format(p[2]) }}</div>
+                <div class="meta">
+                    Stock: {{ p[3] }}&nbsp;&nbsp;·&nbsp;&nbsp;{{ p[4] }}<br>
+                    {{ p[5] }}
+                </div>
+                <div class="actions">
+                    <a href="{{ url_for('add_to_cart', product_id=p[0]) }}" class="btn btn-primary btn-sm">
+                        Add to Cart
+                    </a>
+                    <a href="{{ url_for('write_review', product_id=p[0]) }}" class="btn btn-secondary btn-sm">
+                        Review
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align:center; padding:60px;">
+        <p style="font-size:18px; color:var(--text-soft); font-family:var(--font-head); font-weight:600;">No products found.</p>
+        <p style="color:var(--text-muted); font-size:14px; margin: 8px 0 20px;">Try a different search or category.</p>
+        <a href="{{ url_for('buyer_home') }}" class="btn btn-primary">Show All Products</a>
+    </div>
+{% endif %}
+
+{% endblock %}

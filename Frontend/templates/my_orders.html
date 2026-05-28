@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">📋 My Orders</h1>
+
+{% if orders %}
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Order Status</th>
+                <th>Payment</th>
+                <th>Pay Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in orders %}
+            <tr>
+                <td style="font-family:var(--font-head); font-weight:700;">#{{ o[0] }}</td>
+                <td>{{ o[1].strftime('%d %b %Y') if o[1] else 'N/A' }}</td>
+                <td style="color:var(--accent); font-weight:700;">Rs {{ "%.2f"|format(o[2]) }}</td>
+                <td>
+                    {% if o[3] == 'delivered' %}
+                        <span class="badge badge-success">{{ o[3] }}</span>
+                    {% elif o[3] == 'cancelled' %}
+                        <span class="badge badge-danger">{{ o[3] }}</span>
+                    {% elif o[3] == 'shipped' %}
+                        <span class="badge badge-info">{{ o[3] }}</span>
+                    {% else %}
+                        <span class="badge badge-warning">{{ o[3] }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ o[4] or 'N/A' }}</td>
+                <td>
+                    {% if o[5] == 'completed' %}
+                        <span class="badge badge-success">{{ o[5] }}</span>
+                    {% elif o[5] == 'failed' %}
+                        <span class="badge badge-danger">{{ o[5] }}</span>
+                    {% else %}
+                        <span class="badge badge-warning">{{ o[5] or 'pending' }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align:center; padding:70px;">
+    <div style="font-size:52px; margin-bottom:16px;">📭</div>
+    <p style="font-size:20px; color:var(--text-soft); font-family:var(--font-head); font-weight:700; margin-bottom:8px;">No orders yet</p>
+    <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Browse products and place your first order!</p>
+    <a href="{{ url_for('buyer_home') }}" class="btn btn-primary">Start Shopping</a>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">🛒 My Cart</h1>
+
+{% if items %}
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item[1] }}</td>
+                <td>Rs {{ "%.2f"|format(item[2]) }}</td>
+                <td><span class="badge badge-info">{{ item[3] }}</span></td>
+                <td style="color:var(--accent); font-weight:700; font-family:var(--font-head);">Rs {{ "%.2f"|format(item[4]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:20px; border-top:1px solid var(--border);">
+        <div style="font-family:var(--font-head);">
+            <span style="color:var(--text-muted); font-size:13px; text-transform:uppercase; letter-spacing:0.07em;">Total</span><br>
+            <span style="font-size:28px; font-weight:800; color:var(--accent); letter-spacing:-1px;">Rs {{ "%.2f"|format(total) }}</span>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="{{ url_for('buyer_home') }}" class="btn btn-secondary">← Continue Shopping</a>
+            <a href="{{ url_for('place_order') }}" class="btn btn-primary">Checkout →</a>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="card" style="text-align:center; padding:70px;">
+    <div style="font-size:52px; margin-bottom:16px;">🛒</div>
+    <p style="font-size:20px; color:var(--text-soft); font-family:var(--font-head); font-weight:700; margin-bottom:8px;">Your cart is empty</p>
+    <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Add some products to get started.</p>
+    <a href="{{ url_for('buyer_home') }}" class="btn btn-primary">Start Shopping</a>
+</div>
+{% endif %}
+
+{% endblock %}

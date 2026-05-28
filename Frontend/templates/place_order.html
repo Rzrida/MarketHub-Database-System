@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">📦 Checkout</h1>
+
+<div style="max-width:520px; margin:0 auto;">
+    <div class="card">
+        <h2>Order Details</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label>Delivery Address</label>
+                {% if addresses %}
+                    <select name="address_id" required>
+                        {% for addr in addresses %}
+                            <option value="{{ addr[0] }}">
+                                {{ addr[1] }}, {{ addr[2] }}, {{ addr[3] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <p style="color:#fca5a5; font-size:13.5px; padding:10px 0;">
+                        ⚠️ No address found. Please add one below first.
+                    </p>
+                    <select name="address_id">
+                        <option value="">-- No address --</option>
+                    </select>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select name="payment_method" required>
+                    <option value="Cash on Delivery">Cash on Delivery</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="JazzCash">JazzCash</option>
+                    <option value="EasyPaisa">EasyPaisa</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+                <a href="{{ url_for('cart') }}" class="btn btn-secondary">← Back to Cart</a>
+                <button type="submit" class="btn btn-success" style="flex:1;">✅ Place Order</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>➕ Add New Address</h2>
+        <form method="POST" action="{{ url_for('add_address') }}">
+            <div class="form-group">
+                <label>Street</label>
+                <input type="text" name="street" placeholder="House #, Street name" required />
+            </div>
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" placeholder="e.g. Islamabad" required />
+            </div>
+            <div class="form-group">
+                <label>Country</label>
+                <input type="text" name="country" placeholder="e.g. Pakistan" required />
+            </div>
+            <div class="form-group">
+                <label>Zip Code</label>
+                <input type="text" name="zip_code" placeholder="e.g. 44000" />
+            </div>
+            <button type="submit" class="btn btn-info">Save Address</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

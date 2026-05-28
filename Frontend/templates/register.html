@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="max-width: 480px; margin: 44px auto;">
+    <div style="text-align:center; margin-bottom: 28px;">
+        <div style="font-size: 38px; margin-bottom: 12px;">🚀</div>
+        <h1 style="font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.8px; margin-bottom: 8px;">Create account</h1>
+        <p style="color: var(--text-muted); font-size: 14px;">Join MarketHub as a Buyer or Seller</p>
+    </div>
+    <div class="card">
+        <form method="POST">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="you@email.com" required />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Min 6 characters" required />
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" placeholder="+92 300 0000000" />
+            </div>
+            <div class="form-group">
+                <label>Register as</label>
+                <select name="role" id="roleSelect" onchange="toggleFields()">
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                </select>
+            </div>
+            <div id="buyerFields">
+                <div class="form-group">
+                    <label>Date of Birth <span style="color:var(--text-muted); font-size:11px; text-transform:none; letter-spacing:0;">(must be 16+)</span></label>
+                    <input type="date" name="dob" />
+                </div>
+            </div>
+            <div id="sellerFields" style="display:none;">
+                <div class="form-group">
+                    <label>Shop Name</label>
+                    <input type="text" name="shop_name" placeholder="Your shop name" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:15px; margin-top:4px;">
+                Create Account →
+            </button>
+        </form>
+        <p style="text-align:center; margin-top:20px; font-size:13.5px; color:var(--text-muted);">
+            Already have an account?
+            <a href="{{ url_for('login') }}" style="color:var(--accent); font-weight:600; text-decoration:none;"> Login here</a>
+        </p>
+    </div>
+</div>
+
+<script>
+function toggleFields() {
+    const role = document.getElementById('roleSelect').value;
+    document.getElementById('buyerFields').style.display  = role === 'buyer'  ? 'block' : 'none';
+    document.getElementById('sellerFields').style.display = role === 'seller' ? 'block' : 'none';
+}
+</script>
+
+{% endblock %}

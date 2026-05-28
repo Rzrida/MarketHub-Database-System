@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Back button -->
+<a href="{{ url_for('buyer_home') }}"
+   style="display:inline-flex; align-items:center; gap:6px; color:#888;
+          font-size:14px; text-decoration:none; margin-bottom:20px;">
+    ← Back to Products
+</a>
+
+<!-- Main product section -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:start;">
+
+    <!-- LEFT: Image -->
+    <div style="background:white; border-radius:12px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.08);
+                padding:20px; text-align:center;">
+        {% if product[6] %}
+            <img src="{{ url_for('static', filename='product_images/' + product[6]) }}"
+                 alt="{{ product[1] }}"
+                 style="width:100%; max-height:420px; object-fit:contain; border-radius:8px;" />
+        {% else %}
+            <div style="height:420px; display:flex; align-items:center;
+                        justify-content:center; color:#ccc; font-size:16px;">
+                No Image Available
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- RIGHT: Details -->
+    <div>
+        <div style="background:white; border-radius:12px;
+                    box-shadow:0 2px 10px rgba(0,0,0,0.08); padding:28px;">
+
+            <!-- Category badge -->
+            <span style="background:#f0f0f0; color:#666; font-size:12px;
+                         padding:4px 12px; border-radius:20px;">
+                {{ product[4] }} › {{ product[7] }}
+            </span>
+
+            <!-- Product name -->
+            <h1 style="font-size:24px; font-weight:800; color:#1a1a2e;
+                       margin:14px 0 6px; line-height:1.3;">
+                {{ product[1] }}
+            </h1>
+
+            <!-- Shop -->
+            <p style="color:#888; font-size:14px; margin-bottom:16px;">
+                🏪 Sold by <strong>{{ product[5] }}</strong>
+            </p>
+
+            <!-- Rating -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                <span style="color:#f5a623; font-size:18px;">
+                    {% for i in range(1, 6) %}
+                        {% if i <= avg_rating|round|int %}⭐{% else %}☆{% endif %}
+                    {% endfor %}
+                </span>
+                <span style="color:#888; font-size:13px;">
+                    {{ "%.1f"|format(avg_rating) }} ({{ review_count }} review{{ 's' if review_count != 1 }})
+                </span>
+            </div>
+
+            <!-- Price -->
+            <div style="font-size:32px; font-weight:800; color:#e94560; margin-bottom:16px;">
+                Rs {{ "%.2f"|format(product[2]) }}
+            </div>
+
+            <!-- Stock -->
+            <div style="margin-bottom:24px;">
+                {% if product[3] > 10 %}
+                    <span class="badge badge-success">✔ In Stock ({{ product[3] }} available)</span>
+                {% elif product[3] > 0 %}
+                    <span class="badge badge-warning">⚠ Only {{ product[3] }} left!</span>
+                {% else %}
+                    <span class="badge badge-danger">✖ Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <!-- Add to cart -->
+            {% if product[3] > 0 %}
+                <a href="{{ url_for('add_to_cart', product_id=product[0]) }}"
+                   class="btn btn-primary"
+                   style="width:100%; text-align:center; padding:14px; font-size:16px;">
+                    🛒 Add to Cart
+                </a>
+            {% else %}
+                <button class="btn" disabled
+                        style="width:100%; padding:14px; font-size:16px;
+                               background:#ccc; color:#fff; cursor:not-allowed;">
+                    Out of Stock
+                </button>
+            {% endif %}
+
+            <a href="{{ url_for('write_review', product_id=product[0]) }}"
+               class="btn btn-secondary"
+               style="width:100%; text-align:center; padding:12px;
+                      font-size:14px; margin-top:10px;">
+                ⭐ Write a Review
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div style="margin-top:30px;">
+    <div class="card">
+        <h2 style="margin-bottom:20px;">Customer Reviews
+            <span style="font-size:14px; font-weight:400; color:#888;">
+                ({{ review_count }})
+            </span>
+        </h2>
+
+        {% if reviews %}
+            {% for r in reviews %}
+            <div style="border-bottom:1px solid #f0f0f0; padding:16px 0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; color:#1a1a2e;">{{ r[0] }}</span>
+                    <span style="color:#888; font-size:12px;">
+                        {{ r[3].strftime('%d %b %Y') if r[3] else '' }}
+                    </span>
+                </div>
+                <div style="color:#f5a623; margin:4px 0;">
+                    {% for i in range(r[1]) %}⭐{% endfor %}
+                </div>
+                <p style="color:#555; font-size:14px; margin-top:6px;">
+                    {{ r[2] or 'No comment.' }}
+                </p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:#aaa; text-align:center; padding:20px;">
+                No reviews yet. Be the first to review!
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

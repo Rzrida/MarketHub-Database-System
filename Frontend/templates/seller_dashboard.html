@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">Seller Dashboard</h1>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value">{{ active_count }}</div>
+        <div class="stat-label">Active Products</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">Rs {{ "%.0f"|format(total_revenue) }}</div>
+        <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ products|length }}</div>
+        <div class="stat-label">Total Listings</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="margin:0;">My Products</h2>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary">+ Add Product</a>
+    </div>
+
+    {% if products %}
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td style="width:64px;">
+                    {% if p[5] %}
+                        <img src="{{ url_for('static', filename='product_images/' + p[5]) }}"
+                             style="width:52px; height:52px; object-fit:cover;
+                                    border-radius:8px; border:1px solid rgba(255,255,255,0.1);" />
+                    {% else %}
+                        <div style="width:52px; height:52px; border-radius:8px;
+                                    background:rgba(255,255,255,0.04);
+                                    border:1px solid rgba(255,255,255,0.08);
+                                    display:flex; align-items:center; justify-content:center;">
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"
+                                 stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    {% endif %}
+                </td>
+                <td>{{ p[1] }}</td>
+                <td style="color:var(--accent); font-weight:700; font-family:var(--font-head);">Rs {{ "%.2f"|format(p[2]) }}</td>
+                <td>{{ p[3] }}</td>
+                <td>
+                    {% if p[4] == 'active' %}
+                        <span class="badge badge-success">active</span>
+                    {% elif p[4] == 'inactive' %}
+                        <span class="badge badge-warning">inactive</span>
+                    {% else %}
+                        <span class="badge badge-danger">deleted</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display:flex; gap:6px;">
+                        <a href="{{ url_for('edit_product', product_id=p[0]) }}" class="btn btn-info btn-sm">Edit</a>
+                        <a href="{{ url_for('delete_product', product_id=p[0]) }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Remove this product?')">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center; padding:50px 30px;">
+        <p style="color:var(--text-muted); font-size:15px; margin-bottom:18px;">No products yet. Add your first listing!</p>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary">+ Add Product</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
